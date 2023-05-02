@@ -3,7 +3,7 @@
   "environment": "development",
   // Run Passenger on the given port. In this example, we use port 80,
   // the standard HTTP port.
-  "port": 4040,
+  "port": 4050,
   // Tell Passenger to daemonize into the background.
   "daemonize": true,
   // Tell Passenger to run the app as the given user. Only has effect
