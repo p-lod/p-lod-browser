@@ -250,6 +250,7 @@ def index():
   <h2>Browse URNs</h2>
   <ul>
   <li><a href="/urn/urn:p-lod:id:pompeii">http://p-lod.org/urn/urn:p-lod:id:pompeii</a> (Replace with any P-LOD URN.)</li>
+  <li><a href="/urn/urn:p-lod:id:r1-i10-p4">http://p-lod.org/urn/urn:p-lod:id:r1-i10-p4</a></li>
   <li><a href="/urn/urn:p-lod:id:ariadne">http://p-lod.org/urn/urn:p-lod:id:ariadne</a></li>
   <li><a href="/urn/urn:p-lod:id:snake">http://p-lod.org/urn/urn:p-lod:id:snake</a></li>
   </ul>
