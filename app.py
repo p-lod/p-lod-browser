@@ -240,6 +240,7 @@ def p_lod_html_document(r = POMPEII,renderer = None):
 
 @app.route('/')
 def index():
+  # eventually, switch to dominate to create the HTML document
   return """
   <html>
   <head>
@@ -292,13 +293,13 @@ def web_api_urn(urn):
   return f"""
   <html>
   <body>
+  <div>[<a href="/">start</a>]</div>
   <h1>{urn}</h1>
   <div>{identifier_html}</div>
   <div>{as_object_html}</div>
   <div>View in <a href="http://palp.art/browse/{r.identifier}">PALP</a>. (Only useful if PALP enables browsing for '{r.identifier}'.)</div>
   </body>
   </html>"""
-
 
 # /api handlers
 @app.route('/api/geojson/<path:identifier>')
