@@ -289,7 +289,7 @@ def web_api_urn(urn):
   as_object_df['object'] = urn
   as_object_html =  as_object_df.to_html(escape = False, header = False)
 
-  return f"<div>{identifier_html}</div><div>{as_object_html}</div>"
+  return f"<h1>{urn}</h1><div>{identifier_html}</div><div>{as_object_html}</div>"
 
 
 # /api handlers
