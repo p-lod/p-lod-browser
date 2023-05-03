@@ -265,6 +265,8 @@ def index():
   <li><a href="/api/spatial_children/r1">http://p-lod.org/api/spatial_children/r1</a></li>
   </ul>
   </li>
+  </ul>
+  <footer>The P-LOD initiative is jointly directed by <a href="https://isaw.nyu.edu/people/faculty/isaw-faculty/sebastian-heath">Sebastian Heath</a> (NYU) and <a href="https://www.umass.edu/classics/member/eric-poehler">Eric Poehler</a> (UMass Amherst). It includes data collected for the Getty funded <a href="http://palp.art">Pompeii Artistic Landscape Project</a>.</footer>
   </body>
   </html>"""
 
