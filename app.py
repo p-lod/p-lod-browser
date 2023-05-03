@@ -290,6 +290,13 @@ def web_api_urn(urn):
   as_object_df['object'] = urn
   as_object_html =  as_object_df.to_html(escape = False, header = False)
 
+  as_predicate_df = pd.DataFrame.from_dict(json.loads(r.as_predicate()))
+  as_predicate_df = as_predicate_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
+  as_predicate_df = as_predicate_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
+  as_predicate_df['predicate'] = urn
+  as_predicate_html =  as_predicate_df[['subject','predicate','object']].to_html(escape = False, header = False)
+
+
   return f"""
   <html>
   <body>
@@ -297,6 +304,7 @@ def web_api_urn(urn):
   <h1>{urn}</h1>
   <div>{identifier_html}</div>
   <div>{as_object_html}</div>
+  <div>{as_predicate_html}</div>
   <div>View in <a href="http://palp.art/browse/{r.identifier}">PALP</a>. (Only useful if PALP enables browsing for '{r.identifier}'.)</div>
   </body>
   </html>"""
