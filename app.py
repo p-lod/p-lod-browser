@@ -289,7 +289,15 @@ def web_api_urn(urn):
   as_object_df['object'] = urn
   as_object_html =  as_object_df.to_html(escape = False, header = False)
 
-  return f"<h1>{urn}</h1><div>{identifier_html}</div><div>{as_object_html}</div>"
+  return f"""
+  <html>
+  <body>
+  <h1>{urn}</h1>
+  <div>{identifier_html}</div>
+  <div>{as_object_html}</div>
+  <div>View in <a href="http://palp.art/browse/{r.identifier}">PALP</a>. (Only useful if PALP enables browsing for '{r.identifier}'.)</div>
+  </body>
+  </html>"""
 
 
 # /api handlers
