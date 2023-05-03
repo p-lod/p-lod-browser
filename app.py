@@ -274,12 +274,22 @@ def index():
 # /urn
 @app.route('/urn/<path:urn>')
 def web_api_urn(urn):
-  html_df = plodlib.PLODResource(urn.replace('urn:p-lod:id:',''))._id_df
 
-  html_df = html_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
-  html_df = html_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
+  r = plodlib.PLODResource(urn.replace('urn:p-lod:id:',''))
 
-  return html_df.to_html(escape = False, header = False)
+  identifier_df = r._id_df
+
+  identifier_df = identifier_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
+  identifier_df = identifier_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
+  identifier_html =  identifier_df.to_html(escape = False, header = False)
+
+  as_object_df = pd.DataFrame.from_dict(json.loads(r.as_object()))
+  as_object_df = as_object_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
+  as_object_df['object'] = urn
+  as_object_html =  as_object_df.to_html(escape = False, header = False)
+
+  return f"<div>{identifier_html}</div><div>{as_object_html}</div>"
+
 
 # /api handlers
 @app.route('/api/geojson/<path:identifier>')
