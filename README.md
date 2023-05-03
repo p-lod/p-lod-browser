@@ -1,1 +1,1 @@
-Code, etc. for the PALP browser. See http://palp.art .
+Code, etc. for the P-LOD browser. See http://p-lod.org .
