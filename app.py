@@ -220,105 +220,7 @@ def adjust_geojson(geojson_str, rdf_type = None): # working on shifting geojson 
   else:
     return geojson_str
 
-# palp page part renderers
 
-
-
-
-
-def p_lod_spatial_hierarchy(r):
-
-  element = div()
-
-  hier_up = json.loads(r.spatial_hierarchy_up())
-
-  with element:
-    for i,h in enumerate(hier_up):
-      relative_url, label = urn_to_anchor(h['urn'])
-
-      if i == 0:
-        span(label)
-      elif i < (len(hier_up)-1):
-        a(label, href=relative_url)
-      else:
-        a(f"{label}.", href=relative_url)
-
-      if i < (len(hier_up)-1):
-        if i == 0:
-          span(" is within ")
-        else:
-          span(" → ")
-
-  return element
-
-def p_lod_narrower(r):
-
-  element = span()
-
-  narrower = json.loads(r.narrower)
-
-  with element:
-    for i,n in enumerate(narrower):
-        if n['is_depicted'] == 'true':
-          a(f"{n['label']} ",href=f"/browse/{n['urn'].replace('urn:p-lod:id:','')}")
-      
-  return element
-
-@app.route('/snippets/palp_spatial_hierarchy/<path:identifier>')
-def snippet_palp_spatial_hierarchy(identifier):
-  r = plodlib.PLODResource(identifier)
-  return palp_spatial_hierarchy(r).render()
-
-def p_lod_spatial_children(r, images = False):
-
-  element = span()
-  with element:
-    for i,c in enumerate(json.loads(r.spatial_children())):
-      relative_url, label = urn_to_anchor(c['urn'])
-      a(label, href=relative_url)
-      span(" /", style="color: LightGray")
-
-  return element
-
-def p_lod_depicted_by_images(r, first_only = False):
-
-  luna_images_j = json.loads(r.images_from_luna)
-
-  element = div()
-  with element:
-    if first_only:
-      if len(luna_images_j):
-        tilde_val = luna_tilde_val(luna_images_j[0]['urn'])
-
-        img_src,img_description = img_src_from_luna_info(l_collection_id = f'umass~{tilde_val}~{tilde_val}',
-                                                 l_record = luna_images_j[0]['l_record'],
-                                                 l_media  = luna_images_j[0]['l_media'])
-        img(src=img_src)
-
-        with div(style="width:500px"):
-          span(str(img_description))
-          span(' [')
-          a("about image...",href=f"https://umassamherst.lunaimaging.com/luna/servlet/detail/umass~{tilde_val}~{tilde_val}~{luna_images_j[0]['l_record']}~{luna_images_j[0]['l_media']}")
-          span("]")
-
-    else:
-      for i in luna_images_j:
-        tilde_val = luna_tilde_val(i['urn'])
-
-        img_src,img_description = img_src_from_luna_info(l_collection_id = f'umass~{tilde_val}~{tilde_val}',
-                                                 l_record = i['l_record'],
-                                                 l_media  = i['l_media'])
-
-        img(src=img_src)
-
-        with div(style="width:500px; margin-bottom:5px"):
-          span(str(img_description))
-          span(' [')
-          a("about image...",href=f"https://umassamherst.lunaimaging.com/luna/servlet/detail/umass~{tilde_val}~{tilde_val}~{i['l_record']}~{i['l_media']}")
-          span("]")
-        br()
-
-  return element
 
 
 def p_lod_html_document(r = POMPEII,renderer = None):
@@ -344,16 +246,37 @@ def p_lod_browse(urn):
 
   r = plodlib.PLODResource(urn.replace('urn:p-lod:id:',''))
 
-  try:
-    return palp_html_document(r, globals()[f'{r.rdf_type.replace("-","_")}_render']).render() # call p_h_d with right render function if it exists
-  except KeyError as e:
-    return palp_html_document(r,unknown_render).render()
+  # try:
+  #   return palp_html_document(r, globals()[f'{r.rdf_type.replace("-","_")}_render']).render() # call p_h_d with right render function if it exists
+  # except KeyError as e:
+  #   return palp_html_document(r,unknown_render).render()
 
 
 
 @app.route('/')
 def index():
-    return redirect("/start", code=302)
+  return """"
+  <html>
+  <head>
+  <title>Pompeii Linked Open Data (P-LOD)</title>
+  </head>
+  <body>
+  <h1>Pompeii Linked Open Data (P-LOD)</h1>
+  <h2>API</h2>
+  <ul>
+  <li>/api/geojson
+  <ul>
+  <li><a href="/api/geojson/pompeii">http://p-lod.org/api/geojson/pompeii</a>. (Replace with any P-LOD identifier.)</li>
+  <li><a href="/api/geojson/snake">http://p-lod.org/api/geojson/snake</a>.</li>
+  </ul>
+  </li>
+  <li>/api/spatial_children
+  <ul>
+  <li><a href="/api/spatial_children/r1">http://p-lod.org/api/spatial_children/r1</a>.</li>
+  </ul>
+  </li>
+  </body>
+  </html>"""
 
 # API handlers
 
@@ -365,6 +288,6 @@ def web_api_geojson(identifier):
 def web_api_images(identifier):
   return plodlib.PLODResource(identifier).gather_images()
 
-
-
-
+@app.route('/api/spatial_children/<path:identifier>')
+def web_api_spatial_childern(identifier):
+  return plodlib.PLODResource(identifier).spatial_children()
