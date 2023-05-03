@@ -145,7 +145,7 @@ def p_lod_page_footer(r, doc):
     with doc:
       with footer(cls="footer"):
         with span():
-          small("PALP is hosted at the University of Massachusetts-Amherst and funded by the Getty Foundation. The site is very much in development and will change regularly.")
+          small("Pompeii Linked Open Data (P-LOD) is jointly overseen by Sebastian Heath (NYU) and Eric Poehler (UMass-Amherst).")
 
 # convenience functions
 def urn_to_anchor(urn):
@@ -221,8 +221,6 @@ def adjust_geojson(geojson_str, rdf_type = None): # working on shifting geojson 
     return geojson_str
 
 
-
-
 def p_lod_html_document(r = POMPEII,renderer = None):
 
   html_dom = dominate.document(title=f"Pompeii Artistic Landscape Project: {r.identifier}" )
@@ -240,54 +238,55 @@ def p_lod_html_document(r = POMPEII,renderer = None):
 
 # The PALP Verbs that Enable Navigation
 
-@app.route('/urn/<path:urn>')
-@cache.cached(timeout=0)
-def p_lod_browse(urn):
-
-  r = plodlib.PLODResource(urn.replace('urn:p-lod:id:',''))
-
-  # try:
-  #   return palp_html_document(r, globals()[f'{r.rdf_type.replace("-","_")}_render']).render() # call p_h_d with right render function if it exists
-  # except KeyError as e:
-  #   return palp_html_document(r,unknown_render).render()
-
-
-
 @app.route('/')
 def index():
-  return """"
+  return """
   <html>
   <head>
   <title>Pompeii Linked Open Data (P-LOD)</title>
   </head>
   <body>
   <h1>Pompeii Linked Open Data (P-LOD)</h1>
+  <h2>Browse URNs</h2>
+  <ul>
+  <li><a href="/urn/urn:p-lod:id:pompeii">http://p-lod.org/urn/urn:p-lod:id:pompeii</a> (Replace with any P-LOD URN.)</li>
+  <li><a href="/urn/urn:p-lod:id:ariadne">http://p-lod.org/urn/urn:p-lod:id:ariadne</a></li>
+  </ul>
   <h2>API</h2>
   <ul>
   <li>/api/geojson
   <ul>
-  <li><a href="/api/geojson/pompeii">http://p-lod.org/api/geojson/pompeii</a>. (Replace with any P-LOD identifier.)</li>
-  <li><a href="/api/geojson/snake">http://p-lod.org/api/geojson/snake</a>.</li>
+  <li><a href="/api/geojson/pompeii">http://p-lod.org/api/geojson/pompeii</a> (Replace with any P-LOD identifier.)</li>
+  <li><a href="/api/geojson/snake">http://p-lod.org/api/geojson/snake</a></li>
   </ul>
   </li>
   <li>/api/spatial_children
   <ul>
-  <li><a href="/api/spatial_children/r1">http://p-lod.org/api/spatial_children/r1</a>.</li>
+  <li><a href="/api/spatial_children/r1">http://p-lod.org/api/spatial_children/r1</a></li>
   </ul>
   </li>
   </body>
   </html>"""
 
-# API handlers
+# /urn
+@app.route('/urn/<path:urn>')
+def web_api_urn(urn):
+  html_df = plodlib.PLODResource(urn.replace('urn:p-lod:id:',''))._id_df
 
+  html_df = html_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
+  html_df = html_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
+
+  return html_df.to_html(escape = False, header = False)
+
+# /api handlers
 @app.route('/api/geojson/<path:identifier>')
 def web_api_geojson(identifier):
   return Response(plodlib.PLODResource(identifier).geojson, mimetype='application/json')
 
 @app.route('/api/images/<path:identifier>')
 def web_api_images(identifier):
-  return plodlib.PLODResource(identifier).gather_images()
+  return Response(plodlib.PLODResource(identifier).gather_images(), mimetype='application/json')
 
 @app.route('/api/spatial_children/<path:identifier>')
 def web_api_spatial_childern(identifier):
-  return plodlib.PLODResource(identifier).spatial_children()
+  return Response(plodlib.PLODResource(identifier).spatial_children(), mimetype='application/json')
