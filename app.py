@@ -259,8 +259,15 @@ def index():
   <ul>
   <li>/api/geojson
   <ul>
-  <li><a href="/api/geojson/pompeii">http://p-lod.org/api/geojson/pompeii</a> (Replace with any P-LOD identifier.)</li>
-  <li><a href="/api/geojson/snake">http://p-lod.org/api/geojson/snake</a></li>
+  <li><a href="/api/geojson/pompeii">http://p-lod.org/api/geojson/pompeii</a> (Replace with any P-LOD identifier.)
+  <ul>
+  <li><a href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2Fpompeii">View at geojson.io</a></li>
+  </ul>
+  </li>
+  <li><a href="/api/geojson/snake">http://p-lod.org/api/geojson/snake</a><ul>
+  <li><a href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2Fsnake">View at geojson.io</a></li>
+  </ul>
+  </li>
   </ul>
   </li>
   <li>/api/spatial_children
@@ -279,18 +286,19 @@ def web_api_urn(urn):
 
   r = plodlib.PLODResource(urn.replace('urn:p-lod:id:',''))
 
-  identifier_df = r._id_df
+  identifier_df = r._id_df.copy()
 
+  identifier_df.reset_index(inplace=True, drop=False)
   identifier_df = identifier_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
   identifier_df = identifier_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
-  identifier_html =  identifier_df.to_html(escape = False, header = False)
+  identifier_html =  identifier_df.to_html(escape = False, header = False, index=False)
 
   as_object_html = ""
   as_object_df = pd.DataFrame.from_dict(json.loads(r.as_object()))
   if len(as_object_df) > 0:
     as_object_df = as_object_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
     as_object_df['object'] = urn
-    as_object_html =  as_object_df.to_html(escape = False, header = False)
+    as_object_html =  f"{as_object_df.to_html(escape = False, header = False)}<span>Max. 15,000</span>"
 
   as_predicate_html = ""
   as_predicate_df = pd.DataFrame.from_dict(json.loads(r.as_predicate()))
@@ -298,7 +306,7 @@ def web_api_urn(urn):
     as_predicate_df = as_predicate_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
     as_predicate_df = as_predicate_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
     as_predicate_df['predicate'] = urn
-    as_predicate_html =  as_predicate_df[['subject','predicate','object']].to_html(escape = False)
+    as_predicate_html =  f"{as_predicate_df[['subject','predicate','object']].to_html(escape = False, header= False)}<span>Max. 15,000</span>"
 
 
   return f"""
