@@ -297,6 +297,16 @@ def web_api_urn(urn):
     identifier_df.loc['urn:p-lod:id:geojson','o'] = f'[<a href="/api/geojson/{r.identifier}">view as json</a>] [<a target="_new" href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2F{r.identifier}">view as map at geojson.io</a>]'
     identifier_df.rename(index={'urn:p-lod:id:geojson':'geojson'},inplace=True)
 
+  try:
+    if 'urn:p-lod:id:best-image' in identifier_df.index:
+      best_image_urn = identifier_df.loc['urn:p-lod:id:best-image','o']
+      best_image_r = plodlib.PLODResource(best_image_urn.replace('urn:p-lod:id:',''))
+      if best_image_r.identifier != 'None':
+        best_image_thumbnail_url = json.loads(best_image_r.get_predicate_values('urn:p-lod:id:x-luna-url-1'))[0]
+        best_image_html = f'<a href="/urn/{best_image_urn}">{best_image_urn}</a><br><img src="{best_image_thumbnail_url}">'
+        identifier_df.loc['urn:p-lod:id:best-image','o'] = best_image_html
+  except: pass
+
   identifier_df = identifier_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
   identifier_df.reset_index(inplace=True, drop=False)
   identifier_df = identifier_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
