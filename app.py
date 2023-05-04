@@ -49,7 +49,7 @@ cache = Cache(config={
   'CACHE_THRESHOLD': 1000
   })
 app = Flask(__name__)
-# cache.init_app(app)
+cache.init_app(app)
 
 # Connect to the remote triplestore with read-only connection
 store = SPARQLStore(endpoint="http://p-lod.org:3030/plod_endpoint/query",
@@ -289,7 +289,7 @@ def web_api_urn(urn):
   identifier_df = r._id_df.copy()
 
   if 'urn:p-lod:id:geojson' in identifier_df.index:
-    identifier_df.loc['urn:p-lod:id:geojson','o'] = f'[<a href="/api/geojson/{r.identifier}">view as json</a>] [<a href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2F{r.identifier}">view as map at geojson.io</a>]'
+    identifier_df.loc['urn:p-lod:id:geojson','o'] = f'[<a href="/api/geojson/{r.identifier}">view as json</a>] [<a target="_new" href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2F{r.identifier}">view as map at geojson.io</a>]'
     identifier_df.rename(index={'urn:p-lod:id:geojson':'geojson'},inplace=True)
 
   identifier_df = identifier_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)

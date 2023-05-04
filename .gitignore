@@ -1,10 +1,11 @@
 .DS_Store
 __pycache__
 *.cfg
-passenger.4040.log
-passenger.4040.pid.lock
+passenger.4050.log
+passenger.4050.pid.lock
 passenger_wsgi.pyc
 bin/*
 cache/*
 lib/*
 src/*
+.vscode
