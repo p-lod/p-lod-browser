@@ -276,7 +276,7 @@ def index():
   </ul>
   </li>
   </ul>
-  <footer>The P-LOD initiative is jointly directed by <a href="https://isaw.nyu.edu/people/faculty/isaw-faculty/sebastian-heath">Sebastian Heath</a> (NYU) and <a href="https://www.umass.edu/classics/member/eric-poehler">Eric Poehler</a> (UMass Amherst). It includes data collected for the Getty funded <a href="http://palp.art">Pompeii Artistic Landscape Project</a>.</footer>
+  <footer>The P-LOD initiative is jointly directed by <a href="https://isaw.nyu.edu/people/faculty/isaw-faculty/sebastian-heath">Sebastian Heath</a> (NYU) and <a href="https://www.umass.edu/classics/member/eric-poehler">Eric Poehler</a> (UMass Amherst). It includes data collected for the Getty Foundation funded <a href="http://palp.art">Pompeii Artistic Landscape Project</a> and the NEH funded <a href="https://digitalhumanities.umass.edu/pbmp/">Pompeii Bibliography and Mapping Project</a>.</footer>
   </body>
   </html>"""
 
@@ -288,9 +288,12 @@ def web_api_urn(urn):
 
   identifier_df = r._id_df.copy()
 
+  try: identifier_df.loc['urn:p-lod:id:geojson','o'] = f'[<a href="/api/geojson/{r.identifier}">view as json</a>] [<a href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2F{r.identifier}">view as map at geojson.io</a>]'
+  except: pass
+
+  identifier_df = identifier_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
   identifier_df.reset_index(inplace=True, drop=False)
   identifier_df = identifier_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
-  identifier_df = identifier_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
   identifier_html =  identifier_df.to_html(escape = False, header = False, index=False)
 
   as_object_html = ""
