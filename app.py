@@ -307,6 +307,13 @@ def web_api_urn(urn):
         identifier_df.loc['urn:p-lod:id:best-image','o'] = best_image_html
   except: pass
 
+  try:
+    if 'urn:p-lod:id:x-luna-url-2' in identifier_df.index:
+      image_url = identifier_df.loc['urn:p-lod:id:x-luna-url-2','o']
+      image__html = f'<a href="/urn/{image_url}">{image_url}</a><br><img src="{image_url}">'
+      identifier_df.loc['urn:p-lod:id:x-luna-url-2','o'] = image__html
+  except: pass
+
   identifier_df = identifier_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
   identifier_df.reset_index(inplace=True, drop=False)
   identifier_df = identifier_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
