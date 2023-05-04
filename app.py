@@ -248,12 +248,17 @@ def index():
   </head>
   <body>
   <h1>Pompeii Linked Open Data (P-LOD)</h1>
+
+  <p>Over 2.7 million triples describing Pompeii. Click <a href="https://api.triplydb.com/s/VyX7JZWBaf">here</a> for current count.</p>
+
   <h2>Browse URNs</h2>
   <ul>
   <li><a href="/urn/urn:p-lod:id:pompeii">http://p-lod.org/urn/urn:p-lod:id:pompeii</a> (Replace with any P-LOD URN.)</li>
   <li><a href="/urn/urn:p-lod:id:r1-i10-p4">http://p-lod.org/urn/urn:p-lod:id:r1-i10-p4</a></li>
   <li><a href="/urn/urn:p-lod:id:ariadne">http://p-lod.org/urn/urn:p-lod:id:ariadne</a></li>
   <li><a href="/urn/urn:p-lod:id:snake">http://p-lod.org/urn/urn:p-lod:id:snake</a></li>
+  <li><a href="/urn/urn:p-lod:id:wikidata-url">http://p-lod.org/urn/urn:p-lod:id:wikidata-url</a></li>
+  <li><a href="/urn/urn:p-lod:id:pleiades-url">http://p-lod.org/urn/urn:p-lod:id:pleiades-url</a></li>
   </ul>
   <h2>API</h2>
   <ul>
