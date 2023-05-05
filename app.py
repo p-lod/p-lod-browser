@@ -285,7 +285,7 @@ def web_api_urn(urn):
   if len(as_object_df) > 0:
     as_object_df = as_object_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
     as_object_df['object'] = urn
-    subject_predicate_html =  f'<h2 class="text-body-emphasis">Links to {urn}</h2><span>Max. 15,0000 Shown</span>{as_object_df.to_html(escape = False, header = False, classes="table table-striped")}'
+    subject_predicate_html =  f'<h2 class="text-body-emphasis">Links to {urn}</h2><span>Max. 15,000 Shown</span>{as_object_df.to_html(escape = False, header = False, classes="table table-striped")}'
 
   subject_object_html = ""
   as_predicate_df = pd.DataFrame.from_dict(json.loads(r.as_predicate()))
@@ -293,7 +293,7 @@ def web_api_urn(urn):
     as_predicate_df = as_predicate_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
     as_predicate_df = as_predicate_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
     as_predicate_df['predicate'] = urn
-    subject_object_html =  f'<h2 class="text-body-emphasis">{urn} creates links between</h2><span>Max. 15,0000 Shown</span>{as_predicate_df[["subject","predicate","object"]].to_html(escape = False, header= False, classes="table table-striped")}'
+    subject_object_html =  f'<h2 class="text-body-emphasis">{urn} creates links between</h2><span>Max. 15,000 Shown</span>{as_predicate_df[["subject","predicate","object"]].to_html(escape = False, header= False, classes="table table-striped")}'
 
 
   with open('static/templates/urn_template.html', encoding="utf-8") as f:
