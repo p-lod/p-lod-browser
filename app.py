@@ -252,7 +252,7 @@ def web_api_urn(urn):
 
   r = plodlib.PLODResource(urn.replace('urn:p-lod:id:',''))
 
-  identifier_df = r._id_df.copy()
+  identifier_df = r._id_df.sort_values(by = 'p').copy()
 
   if 'urn:p-lod:id:geojson' in identifier_df.index:
     identifier_df.loc['urn:p-lod:id:geojson','o'] = f'[<a href="/api/geojson/{r.identifier}">view as json</a>] [<a target="_new" href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2F{r.identifier}">view as map at geojson.io</a>]'
