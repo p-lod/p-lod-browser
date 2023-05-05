@@ -301,6 +301,7 @@ def web_api_urn(urn):
   urn_template = Template(urn_template_txt)
 
   return urn_template.substitute({'urn':urn,
+                                  'identifier':r.identifier,
                                   'urn_type':r.rdf_type,
                                   'predicate_object_html': predicate_object_html,
                                   'subject_predicate_html': subject_predicate_html,

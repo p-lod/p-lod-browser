@@ -55,20 +55,63 @@
             
           </div>
         -->
-        </div>
-      </nav>
+     </div>
+    </nav>
+    
       <div class="container">
 
 
       <div class="mx-auto p-4 py-md-5"> <!-- col-lg-8 -->
       <main role="main">
-        <h2 class="text-body-emphasis">Statements about ${urn}</h2>
-        ${predicate_object_html}
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link active" data-bs-toggle="tab" href="#triples" aria-selected="true" role="tab">About</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" href="#api_links" aria-selected="false" role="tab" tabindex="-1">API Links</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" href="#tool_links" aria-selected="false" role="tab" tabindex="-1">Research Tool Links</a>
+            </li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active show" id="triples" role="tabpanel">
+                <h2 class="text-body-emphasis">Statements about ${urn}</h2>
+                ${predicate_object_html}
+                
+                ${subject_predicate_html}
+
+                ${subject_object_html}
+            </div>
+            <div class="tab-pane" id="api_links" role="tabpanel">
+            <ul>
+
+                    <li>/api/geojson
+                        <ul>
+                            <li><a href="/api/geojson/${identifier}">http://p-lod.org/api/geojson/${identifier}</a> (Replace with any P-LOD identifier.)
+                                <ul>
+                                    <li>
+                                        <a href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2F${identifier}">View at geojson.io</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>/api/spatial_children
+                    <ul>
+                    <li><a href="/api/spatial_children/${identifier}">http://p-lod.org/api/spatial_children/${identifier}</a></li>
+                    </ul>
+                    </li>
+
+            </ul>
+            </div>
+
+            <div class="tab-pane" id="tool_links" role="tabpanel">
+                <p><a href="http://palp.art/browse/${identifier}">Pompeii Artistic Landscape Project</a> (PALP).</p>
+            </div>
+        </div>
         
-        ${subject_predicate_html}
-
-        ${subject_object_html}
-
+        <p>P-LOD is jointly directed by <a href="https://isaw.nyu.edu/people/faculty/isaw-faculty/sebastian-heath">Sebastian Heath</a> (NYU) and <a href="https://www.umass.edu/classics/member/eric-poehler">Eric Poehler</a> (UMass Amherst). It includes data collected for the Getty Foundation funded <a href="http://palp.art">Pompeii Artistic Landscape Project</a> and the NEH funded <a href="https://digitalhumanities.umass.edu/pbmp/">Pompeii Bibliography and Mapping Project</a>.</p>
       </main>
       </div>
       </div>
