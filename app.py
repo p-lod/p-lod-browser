@@ -240,50 +240,11 @@ def p_lod_html_document(r = POMPEII,renderer = None):
 
 @app.route('/')
 def index():
-  # eventually, switch to dominate to create the HTML document
-  return """
-  <html>
-  <head>
-  <title>Pompeii Linked Open Data (P-LOD)</title>
-  </head>
-  <body>
-  <h1>Pompeii Linked Open Data (P-LOD)</h1>
-
-  <p>Over 2.7 million triples describing Pompeii. Click <a href="https://api.triplydb.com/s/VyX7JZWBaf">here</a> for current count.</p>
-
-  <h2>Browse URNs</h2>
-  <ul>
-  <li><a href="/urn/urn:p-lod:id:pompeii">http://p-lod.org/urn/urn:p-lod:id:pompeii</a> (Replace with any P-LOD URN.)</li>
-  <li><a href="/urn/urn:p-lod:id:r1-i10-p4">http://p-lod.org/urn/urn:p-lod:id:r1-i10-p4</a></li>
-  <li><a href="/urn/urn:p-lod:id:ariadne">http://p-lod.org/urn/urn:p-lod:id:ariadne</a></li>
-  <li><a href="/urn/urn:p-lod:id:snake">http://p-lod.org/urn/urn:p-lod:id:snake</a></li>
-  <li><a href="/urn/urn:p-lod:id:wikidata-url">http://p-lod.org/urn/urn:p-lod:id:wikidata-url</a></li>
-  <li><a href="/urn/urn:p-lod:id:pleiades-url">http://p-lod.org/urn/urn:p-lod:id:pleiades-url</a></li>
-  </ul>
-  <h2>API</h2>
-  <ul>
-  <li>/api/geojson
-  <ul>
-  <li><a href="/api/geojson/pompeii">http://p-lod.org/api/geojson/pompeii</a> (Replace with any P-LOD identifier.)
-  <ul>
-  <li><a href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2Fpompeii">View at geojson.io</a></li>
-  </ul>
-  </li>
-  <li><a href="/api/geojson/snake">http://p-lod.org/api/geojson/snake</a><ul>
-  <li><a href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2Fsnake">View at geojson.io</a></li>
-  </ul>
-  </li>
-  </ul>
-  </li>
-  <li>/api/spatial_children
-  <ul>
-  <li><a href="/api/spatial_children/r1">http://p-lod.org/api/spatial_children/r1</a></li>
-  </ul>
-  </li>
-  </ul>
-  <footer>The P-LOD initiative is jointly directed by <a href="https://isaw.nyu.edu/people/faculty/isaw-faculty/sebastian-heath">Sebastian Heath</a> (NYU) and <a href="https://www.umass.edu/classics/member/eric-poehler">Eric Poehler</a> (UMass Amherst). It includes data collected for the Getty Foundation funded <a href="http://palp.art">Pompeii Artistic Landscape Project</a> and the NEH funded <a href="https://digitalhumanities.umass.edu/pbmp/">Pompeii Bibliography and Mapping Project</a>.</footer>
-  </body>
-  </html>"""
+  with open('static/templates/start_template.html', encoding="utf-8") as f:
+      start_template_txt = f.read()
+      
+  return start_template_txt
+  
 
 # /urn
 @app.route('/urn/<path:urn>')
@@ -324,7 +285,7 @@ def web_api_urn(urn):
   if len(as_object_df) > 0:
     as_object_df = as_object_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
     as_object_df['object'] = urn
-    subject_predicate_html =  f'<h2 class="text-body-emphasis">Links to {urn}</h2><span>Max. 15,0000 Shown)</span>{as_object_df.to_html(escape = False, header = False, classes="table table-striped")}'
+    subject_predicate_html =  f'<h2 class="text-body-emphasis">Links to {urn}</h2><span>Max. 15,0000 Shown</span>{as_object_df.to_html(escape = False, header = False, classes="table table-striped")}'
 
   subject_object_html = ""
   as_predicate_df = pd.DataFrame.from_dict(json.loads(r.as_predicate()))
@@ -332,7 +293,7 @@ def web_api_urn(urn):
     as_predicate_df = as_predicate_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
     as_predicate_df = as_predicate_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
     as_predicate_df['predicate'] = urn
-    subject_object_html =  f'<h2 class="text-body-emphasis">{urn} creates links between</h2><span>Max. 15,0000 Shown)</span>{as_predicate_df[["subject","predicate","object"]].to_html(escape = False, header= False, classes="table table-striped")}'
+    subject_object_html =  f'<h2 class="text-body-emphasis">{urn} creates links between</h2><span>Max. 15,0000 Shown</span>{as_predicate_df[["subject","predicate","object"]].to_html(escape = False, header= False, classes="table table-striped")}'
 
 
   with open('static/templates/urn_template.html', encoding="utf-8") as f:
@@ -345,17 +306,6 @@ def web_api_urn(urn):
                                   'subject_predicate_html': subject_predicate_html,
                                   'subject_object_html': subject_object_html,})
 
-  return f"""
-  <html>
-  <body>
-  <div>[<a href="/">start</a>]</div>
-  <h1>{urn}</h1>
-  <div>{identifier_html}</div>
-  <div>{as_object_html}</div>
-  <div>{as_predicate_html}</div>
-  <div>View in <a href="http://palp.art/browse/{r.identifier}">PALP</a>. (Only useful if PALP enables browsing for '{r.identifier}'.)</div>
-  </body>
-  </html>"""
 
 # /api handlers
 @app.route('/api/geojson/<path:identifier>')
