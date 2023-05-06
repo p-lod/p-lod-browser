@@ -271,7 +271,7 @@ def web_api_urn(urn):
   try:
     if 'urn:p-lod:id:x-luna-url-2' in identifier_df.index:
       image_url = identifier_df.loc['urn:p-lod:id:x-luna-url-2','o']
-      image__html = f'<a href="/urn/{image_url}">{image_url}</a><br><img src="{image_url}">'
+      image__html = f'<a href="{image_url}">{image_url}</a><br><img src="{image_url}">'
       identifier_df.loc['urn:p-lod:id:x-luna-url-2','o'] = image__html
   except: pass
 
