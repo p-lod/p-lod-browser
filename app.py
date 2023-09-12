@@ -309,6 +309,14 @@ def web_api_urn(urn):
 
 
 # /api handlers
+@app.route('/api/depicts_concepts/<path:identifier>')
+def web_api_depicts_concepts(identifier):
+  return Response(plodlib.PLODResource(identifier).depicts_concepts(), mimetype='application/json')
+
+@app.route('/api/depicted_where/<path:identifier>')
+def web_api_depicted_where(identifier):
+  return Response(plodlib.PLODResource(identifier).depicted_where(), mimetype='application/json')
+
 @app.route('/api/geojson/<path:identifier>')
 def web_api_geojson(identifier):
   return Response(plodlib.PLODResource(identifier).geojson, mimetype='application/json')
