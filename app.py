@@ -32,6 +32,8 @@ from shapely.affinity import translate
 
 from string import Template
 
+import traceback
+
 import plodlib
 
 ns = {"dcterms" : "http://purl.org/dc/terms/",
@@ -73,7 +75,18 @@ def index():
       start_template_txt = f.read()
       
   return start_template_txt
-  
+
+# helper function
+def embed_image(row):
+  print(row)
+  print(type(row))
+  best_image_urn = row
+  best_image_r = plodlib.PLODResource(best_image_urn.replace('urn:p-lod:id:',''))
+  best_image_thumbnail_url = json.loads(best_image_r.get_predicate_values('urn:p-lod:id:x-luna-url-1'))[0]
+  image_html = f'<a href="urn/{best_image_urn}">{best_image_urn}</a><br><img src="{best_image_thumbnail_url}">'
+  print(image_html)
+  return image_html
+
 
 # /urn
 @app.route('/urn/<path:urn>')
@@ -88,14 +101,12 @@ def web_api_urn(urn):
     identifier_df.rename(index={'urn:p-lod:id:geojson':'geojson'},inplace=True)
 
   try:
-    if 'urn:p-lod:id:best-image' in identifier_df.index:
-      best_image_urn = identifier_df.loc['urn:p-lod:id:best-image','o']
-      best_image_r = plodlib.PLODResource(best_image_urn.replace('urn:p-lod:id:',''))
-      if best_image_r.identifier != 'None':
-        best_image_thumbnail_url = json.loads(best_image_r.get_predicate_values('urn:p-lod:id:x-luna-url-1'))[0]
-        best_image_html = f'<a href="/urn/{best_image_urn}">{best_image_urn}</a><br><img src="{best_image_thumbnail_url}">'
-        identifier_df.loc['urn:p-lod:id:best-image','o'] = best_image_html
-  except: pass
+      mask = identifier_df.index == 'urn:p-lod:id:best-image'
+      identifier_df.loc[mask, 'o'] = identifier_df.loc[mask, 'o'].apply(embed_image)
+
+  except Exception as e:
+    print("Error: ", e)
+    print(traceback.format_exc())
 
   try:
     if 'urn:p-lod:id:x-luna-url-2' in identifier_df.index:
@@ -136,13 +147,13 @@ def web_api_urn(urn):
                                   'subject_object_html': subject_object_html,})
 
 # /api handlers
-@app.route('/api/depicts_concepts/<path:identifier>')
-def web_api_depicts_concepts(identifier):
-  return Response(plodlib.PLODResource(identifier).depicts_concepts(), mimetype='application/json')
-
 @app.route('/api/depicted_where/<path:identifier>')
 def web_api_depicted_where(identifier):
   return Response(plodlib.PLODResource(identifier).depicted_where(), mimetype='application/json')
+
+@app.route('/api/depicts_concepts/<path:identifier>')
+def web_api_depicts_concepts(identifier):
+  return Response(plodlib.PLODResource(identifier).depicts_concepts(), mimetype='application/json')
 
 @app.route('/api/geojson/<path:identifier>')
 def web_api_geojson(identifier):
@@ -152,6 +163,18 @@ def web_api_geojson(identifier):
 def web_api_images(identifier):
   return Response(plodlib.PLODResource(identifier).gather_images(), mimetype='application/json')
 
+@app.route('/api/spatial_ancestors/<path:identifier>')
+def web_api_spatial_ancestors(identifier):
+  return Response(plodlib.PLODResource(identifier).spatial_ancestors(), mimetype='application/json')
+
 @app.route('/api/spatial_children/<path:identifier>')
-def web_api_spatial_childern(identifier):
+def web_api_spatial_children(identifier):
   return Response(plodlib.PLODResource(identifier).spatial_children(), mimetype='application/json')
+
+@app.route('/api/spatially_within/<path:identifier>')
+def web_api_spatially_within(identifier):
+  return Response(plodlib.PLODResource(identifier).spatially_within(), mimetype='application/json')
+
+@app.route('/api/within_region/<path:identifier>')
+def web_api_within_region(identifier):
+  return Response(plodlib.PLODResource(identifier).within_region(), mimetype='application/json')
