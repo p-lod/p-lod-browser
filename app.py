@@ -83,7 +83,7 @@ def embed_image(row):
   best_image_urn = row
   best_image_r = plodlib.PLODResource(best_image_urn.replace('urn:p-lod:id:',''))
   best_image_thumbnail_url = json.loads(best_image_r.get_predicate_values('urn:p-lod:id:x-luna-url-1'))[0]
-  image_html = f'<a href="urn/{best_image_urn}">{best_image_urn}</a><br><img src="{best_image_thumbnail_url}">'
+  image_html = f'<a href="/urn/{best_image_urn}">{best_image_urn}</a><br><img src="{best_image_thumbnail_url}">'
   print(image_html)
   return image_html
 
