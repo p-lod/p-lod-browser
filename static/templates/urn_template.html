@@ -24,45 +24,6 @@
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <!--
-          <div class="collapse navbar-collapse" id="navbarColor01">
-            <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                <a class="nav-link active" href="/">Start
-                  <span class="visually-hidden">(current)</span>
-                </a>
-              </li>
- 
-              
-              <li class="nav-item">
-                <a class="nav-link" href="#">Features</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">About</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Separated link</a>
-                </div>
-              </li>
-                
-            </ul>
-            
-            <form class="d-flex">
-              <input class="form-control me-sm-2" type="search" placeholder="Search">
-              <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-            </form>
-            
-          </div>
-        -->
      </div>
     </nav>
 
@@ -92,31 +53,34 @@
                 ${subject_object_html}
             </div>
             <div class="tab-pane" id="api_links" role="tabpanel">
+            <h2>API Links</h2>
+            <p>For preliminary documentation of the api, see <a href="https://api.p-lod.org/docs">https://api.p-lod.org/docs</a>.</p>
             <ul>
 
-                <li>/api/depicted_where
+                <li>/depicted_where
                 <ul>
-                <li><a href="/api/depicted_where/${identifier}">http://p-lod.org/api/depicted_where/${identifier}</a></li>
+                <li><a href="https://api.p-lod.org/depicted-where/${identifier}">https://api.p-lod.org/depicted-where/${identifier}</a></li>
                 </ul>
-                <li>/api/depicts_concepts
+                </li>
+                <li>/depicts_concepts
                   <ul>
-                  <li><a href="/api/depicts_concepts/${identifier}">http://p-lod.org/api/depicts_concepts/${identifier}</a></li>
+                  <li><a href="https://api.p-lod.org//depicts-concepts/${identifier}">https://api.p-lod.org//depicts-concepts/${identifier}</a></li>
                   </ul>
                 </li>
-                <li>/api/geojson
+                <li>/geojson
                         <ul>
-                            <li><a href="/api/geojson/${identifier}">http://p-lod.org/api/geojson/${identifier}</a> (Replace with any P-LOD identifier.)
+                            <li><a href="https://api.p-lod.org//geojson/${identifier}">https://api.p-lod.org//geojson/${identifier}</a>
                                 <ul>
                                     <li>
-                                        <a href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2F${identifier}">View at geojson.io</a>
+                                        <a href="https://geojson.io/#data=data:text/x-url,https%3A%2F%2Fapi.p-lod.org%2Fgeojson%2F${identifier}">View at geojson.io</a>
                                     </li>
                                 </ul>
                             </li>
                         </ul>
                     </li>
-                    <li>/api/spatial_children
+                    <li>/spatial_children
                     <ul>
-                    <li><a href="/api/spatial_children/${identifier}">http://p-lod.org/api/spatial_children/${identifier}</a></li>
+                    <li><a href="https://api.p-lod.org/spatial-children/${identifier}">https://api.p-lod.org/api/spatial-children/${identifier}</a></li>
                     </ul>
                     </li>
 
@@ -127,7 +91,7 @@
                 <p><a href="http://palp.art/browse/${identifier}">Pompeii Artistic Landscape Project</a> (PALP).</p>
             </div>
         </div>
-        
+
         <p>P-LOD is jointly directed by <a href="https://isaw.nyu.edu/people/faculty/isaw-faculty/sebastian-heath">Sebastian Heath</a> (NYU) and <a href="https://www.umass.edu/classics/member/eric-poehler">Eric Poehler</a> (UMass Amherst). It includes data collected for the Getty Foundation funded <a href="http://palp.art">Pompeii Artistic Landscape Project</a> and the NEH funded <a href="https://digitalhumanities.umass.edu/pbmp/">Pompeii Bibliography and Mapping Project</a>.</p>
       </main>
       </div>

@@ -43,15 +43,17 @@ ns = {"dcterms" : "http://purl.org/dc/terms/",
       "p-lod"   : "urn:p-lod:id:" }
 
 
-cache = Cache(config={
-  'CACHE_TYPE': 'FileSystemCache',
-  'CACHE_DIR': 'cache',
-  'CACHE_DEFAULT_TIMEOUT': 0,
-  'CACHE_IGNORE_ERRORS': True,
-  'CACHE_THRESHOLD': 1000
-  })
+
 app = Flask(__name__)
-cache.init_app(app)
+# cache = Cache(config={
+#   'CACHE_TYPE': 'FileSystemCache',
+#   'CACHE_DIR': 'cache',
+#   'CACHE_DEFAULT_TIMEOUT': 0,
+#   'CACHE_IGNORE_ERRORS': True,
+#   'CACHE_THRESHOLD': 1000
+#   })
+# cache.init_app(app)
+# cache.clear()
 
 # Connect to the remote triplestore with read-only connection
 store = SPARQLStore(endpoint="http://p-lod.org:3030/plod_endpoint/query",
@@ -82,7 +84,8 @@ def embed_image(row):
   print(type(row))
   best_image_urn = row
   best_image_r = plodlib.PLODResource(best_image_urn.replace('urn:p-lod:id:',''))
-  best_image_thumbnail_url = json.loads(best_image_r.get_predicate_values('urn:p-lod:id:x-luna-url-1'))[0]
+  best_image_thumbnail_url = best_image_r.get_predicate_values('urn:p-lod:id:x-luna-url-1')[0]
+  print(f'bitu: {best_image_thumbnail_url}')
   image_html = f'<a href="/urn/{best_image_urn}">{best_image_urn}</a><br><img src="{best_image_thumbnail_url}">'
   print(image_html)
   return image_html
@@ -97,7 +100,7 @@ def web_api_urn(urn):
   identifier_df = r._id_df.sort_values(by = 'p').copy()
 
   if 'urn:p-lod:id:geojson' in identifier_df.index:
-    identifier_df.loc['urn:p-lod:id:geojson','o'] = f'[<a href="/api/geojson/{r.identifier}">view as json</a>] [<a target="_new" href="http://geojson.io/#data=data:text/x-url,http%3A%2F%2Fp-lod.org%2Fapi%2Fgeojson%2F{r.identifier}">view as map at geojson.io</a>]'
+    identifier_df.loc['urn:p-lod:id:geojson','o'] = f'[<a href="https://api.p-lod.org/geojson/{r.identifier}">view as json</a>] [<a target="_new" href="http://geojson.io/#data=data:text/x-url,https%3A%2F%2Fapi.p-lod.org%2Fgeojson%2F{r.identifier}">view as map at geojson.io</a>]'
     identifier_df.rename(index={'urn:p-lod:id:geojson':'geojson'},inplace=True)
 
   try:
@@ -121,14 +124,14 @@ def web_api_urn(urn):
   predicate_object_html =  identifier_df.to_html(escape = False, header = False, index=False, classes='table table-striped')
 
   subject_predicate_html = ""
-  as_object_df = pd.DataFrame.from_dict(json.loads(r.as_object()))
+  as_object_df = pd.DataFrame.from_dict(r.as_object())
   if len(as_object_df) > 0:
     as_object_df = as_object_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
     as_object_df['object'] = urn
     subject_predicate_html =  f'<h2 class="text-body-emphasis">Links to {urn}</h2><span>Max. 15,000 Shown</span>{as_object_df.to_html(escape = False, header = False, classes="table table-striped")}'
 
   subject_object_html = ""
-  as_predicate_df = pd.DataFrame.from_dict(json.loads(r.as_predicate()))
+  as_predicate_df = pd.DataFrame.from_dict(r.as_predicate())
   if len(as_predicate_df) > 0:
     as_predicate_df = as_predicate_df.replace(r"^(urn:p-lod:id:.*)",r'<a href="/urn/\1">\1</a>', regex=True)
     as_predicate_df = as_predicate_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
@@ -146,35 +149,3 @@ def web_api_urn(urn):
                                   'subject_predicate_html': subject_predicate_html,
                                   'subject_object_html': subject_object_html,})
 
-# /api handlers
-@app.route('/api/depicted_where/<path:identifier>')
-def web_api_depicted_where(identifier):
-  return Response(plodlib.PLODResource(identifier).depicted_where(), mimetype='application/json')
-
-@app.route('/api/depicts_concepts/<path:identifier>')
-def web_api_depicts_concepts(identifier):
-  return Response(plodlib.PLODResource(identifier).depicts_concepts(), mimetype='application/json')
-
-@app.route('/api/geojson/<path:identifier>')
-def web_api_geojson(identifier):
-  return Response(plodlib.PLODResource(identifier).geojson, mimetype='application/json')
-
-@app.route('/api/images/<path:identifier>')
-def web_api_images(identifier):
-  return Response(plodlib.PLODResource(identifier).gather_images(), mimetype='application/json')
-
-@app.route('/api/spatial_ancestors/<path:identifier>')
-def web_api_spatial_ancestors(identifier):
-  return Response(plodlib.PLODResource(identifier).spatial_ancestors(), mimetype='application/json')
-
-@app.route('/api/spatial_children/<path:identifier>')
-def web_api_spatial_children(identifier):
-  return Response(plodlib.PLODResource(identifier).spatial_children(), mimetype='application/json')
-
-@app.route('/api/spatially_within/<path:identifier>')
-def web_api_spatially_within(identifier):
-  return Response(plodlib.PLODResource(identifier).spatially_within(), mimetype='application/json')
-
-@app.route('/api/within_region/<path:identifier>')
-def web_api_within_region(identifier):
-  return Response(plodlib.PLODResource(identifier).within_region(), mimetype='application/json')
