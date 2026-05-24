@@ -68,6 +68,32 @@ browse_within_icon = '⧉'
 browse_image_icon = '🔎'
 
 
+def is_nullish(value):
+  if value is None:
+    return True
+  if isinstance(value, float) and pd.isna(value):
+    return True
+  if isinstance(value, str) and value.strip().lower() in {'', 'none', 'nan', 'null'}:
+    return True
+  return False
+
+
+def first_non_nullish(value):
+  if isinstance(value, pd.Series):
+    for item in value.tolist():
+      if not is_nullish(item):
+        return item
+    return None
+  if isinstance(value, (list, tuple)):
+    for item in value:
+      if not is_nullish(item):
+        return item
+    return None
+  if is_nullish(value):
+    return None
+  return value
+
+
 
 # The PALP Verbs that Enable Navigation
 
@@ -80,15 +106,29 @@ def index():
 
 # helper function
 def embed_image(row):
-  print(row)
-  print(type(row))
-  best_image_urn = row
-  best_image_r = plodlib.PLODResource(best_image_urn.replace('urn:p-lod:id:',''))
-  best_image_thumbnail_url = best_image_r.get_predicate_values('urn:p-lod:id:x-luna-url-1')[0]
-  print(f'bitu: {best_image_thumbnail_url}')
-  image_html = f'<a href="/urn/{best_image_urn}">{best_image_urn}</a><br><img src="{best_image_thumbnail_url}">'
-  print(image_html)
-  return image_html
+  best_image_urn = first_non_nullish(row)
+  if is_nullish(best_image_urn):
+    return ''
+
+  best_image_urn = str(best_image_urn).strip()
+  if best_image_urn.startswith('urn:p-lod:id:'):
+    best_image_id = best_image_urn.replace('urn:p-lod:id:', '')
+  else:
+    best_image_id = best_image_urn
+    best_image_urn = f'urn:p-lod:id:{best_image_urn}'
+
+  best_image_r = plodlib.PLODResource(best_image_id)
+  thumbnail_values = best_image_r.get_predicate_values('urn:p-lod:id:x-luna-url-1')
+  best_image_thumbnail_url = first_non_nullish(thumbnail_values)
+
+  urn_text = py_html.escape(best_image_urn)
+  urn_href = py_html.escape(best_image_urn, quote=True)
+
+  if is_nullish(best_image_thumbnail_url):
+    return f'<a href="/urn/{urn_href}">{urn_text}</a>'
+
+  image_url = py_html.escape(str(best_image_thumbnail_url), quote=True)
+  return f'<a href="/urn/{urn_href}">{urn_text}</a><br><img src="{image_url}">'
 
 
 # /urn
@@ -97,7 +137,11 @@ def web_api_urn(urn):
 
   r = plodlib.PLODResource(urn.replace('urn:p-lod:id:',''))
 
-  identifier_df = r._id_df.sort_values(by = 'p').copy()
+  identifier_df = r._id_df.copy()
+  if 'p' in identifier_df.columns:
+    identifier_df = identifier_df.sort_values(by='p')
+  else:
+    identifier_df = identifier_df.sort_index()
 
   if 'urn:p-lod:id:geojson' in identifier_df.index:
     identifier_df.loc['urn:p-lod:id:geojson','o'] = f'[<a href="https://api.p-lod.org/geojson/{r.identifier}">view as json</a>] [<a target="_new" href="http://geojson.io/#data=data:text/x-url,https%3A%2F%2Fapi.p-lod.org%2Fgeojson%2F{r.identifier}">view as map at geojson.io</a>]'
@@ -113,9 +157,11 @@ def web_api_urn(urn):
 
   try:
     if 'urn:p-lod:id:x-luna-url-2' in identifier_df.index:
-      image_url = identifier_df.loc['urn:p-lod:id:x-luna-url-2','o']
-      image__html = f'<a href="{image_url}">{image_url}</a><br><img src="{image_url}">'
-      identifier_df.loc['urn:p-lod:id:x-luna-url-2','o'] = image__html
+      image_url = first_non_nullish(identifier_df.loc['urn:p-lod:id:x-luna-url-2','o'])
+      if not is_nullish(image_url):
+        image_url = py_html.escape(str(image_url), quote=True)
+        image__html = f'<a href="{image_url}">{image_url}</a><br><img src="{image_url}">'
+        identifier_df.loc['urn:p-lod:id:x-luna-url-2','o'] = image__html
   except: pass
 
   identifier_df = identifier_df.replace(r"^(http(s|)://.*)",r'<a href="\1" target="_new">\1</a>', regex=True)
