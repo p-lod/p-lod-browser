@@ -137,7 +137,10 @@ def web_api_urn(urn):
 
   r = plodlib.PLODResource(urn.replace('urn:p-lod:id:',''))
 
-  identifier_df = r._id_df.copy()
+  identifier_df = pd.DataFrame(
+      [(p, o) for p, objs in r._predicates.items() for o in objs],
+      columns=['p', 'o']).set_index('p')
+  
   if 'p' in identifier_df.columns:
     identifier_df = identifier_df.sort_values(by='p')
   else:
